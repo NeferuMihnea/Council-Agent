@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Consiliul – Architecture v2</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Segoe UI', Calibri, sans-serif;
+  background: #F0F4F8;
+  padding: 28px;
+  color: #1a1a1a;
+  min-width: 900px;
+}
+
+/* ── Typography ── */
+h1 { color: #1B3A6B; font-size: 19px; font-weight: 800; margin-bottom: 3px; }
+.subtitle { color: #666; font-size: 12px; margin-bottom: 28px; }
+
+/* ── Layout wrapper ── */
+.diagram { display: flex; flex-direction: column; align-items: center; gap: 0; position: relative; }
+
+/* ── Layer label ── */
+.layer-lbl {
+  align-self: flex-start; font-size: 9.5px; font-weight: 700;
+  letter-spacing: 1.6px; color: #AAA; text-transform: uppercase;
+  margin-bottom: 5px; padding-left: 4px;
+}
+
+/* ── Connector arrows ── */
+.arrow-down {
+  width: 2px; background: #B0BEC5; position: relative;
+  margin: 0 auto;
+}
+.arrow-down::after {
+  content: '▼'; position: absolute; bottom: -11px; left: -5px;
+  font-size: 11px; color: #B0BEC5;
+}
+.arr-sm { height: 18px; }
+.arr-md { height: 26px; }
+
+.multi-arr {
+  display: flex; justify-content: space-around;
+  padding: 0 60px; width: 100%;
+}
+.multi-arr span { font-size: 12px; color: #B0BEC5; }
+
+/* ── INPUT ── */
+.input-box {
+  background: #DBEAFE; border: 2px solid #2563EB;
+  border-radius: 12px; padding: 10px 32px;
+  font-size: 13px; font-weight: 700; color: #1E3A8A;
+  text-align: center; width: 420px;
+}
+
+/* ── ORCHESTRATOR ── */
+.orch-wrap { width: 700px; }
+.orch {
+  background: linear-gradient(135deg, #1B3A6B 0%, #2D6DB5 100%);
+  border-radius: 14px; padding: 14px 24px; color: white;
+  text-align: center;
+  box-shadow: 0 6px 24px rgba(27,58,107,0.28);
+}
+.orch-title { font-size: 15px; font-weight: 800; margin-bottom: 8px; }
+.orch-steps { display: flex; justify-content: center; gap: 4px; flex-wrap: wrap; }
+.orch-step {
+  background: rgba(255,255,255,.15); border-radius: 6px;
+  padding: 5px 10px; font-size: 10.5px;
+}
+.orch-step span { font-weight: 700; display: block; font-size: 9px; opacity: .7; }
+
+/* ── AGENTS ROW ── */
+.agents-row { display: flex; gap: 12px; width: 700px; }
+.agent-card {
+  flex: 1; border-radius: 11px; border: 2px solid;
+  overflow: hidden;
+}
+.agent-head {
+  padding: 8px 10px; font-size: 11px; font-weight: 800;
+  display: flex; align-items: center; gap: 6px;
+}
+.agent-body { padding: 8px 10px; font-size: 10.5px; color: #444; line-height: 1.5; }
+.agent-body ul { padding-left: 14px; }
+.agent-body li { margin-bottom: 2px; }
+
+/* Agent colours */
+.ag-proj  { border-color: #2E7D32; }
+.ag-proj .agent-head  { background: #2E7D32; color: white; }
+.ag-res   { border-color: #1565C0; }
+.ag-res .agent-head   { background: #1565C0; color: white; }
+.ag-fin   { border-color: #E65100; }
+.ag-fin .agent-head   { background: #E65100; color: white; }
+
+/* ── PA + DATAVERSE ── */
+.data-section { width: 700px; }
+.pa-row { display: flex; gap: 12px; margin-bottom: 0; }
+
+.pa-flow {
+  flex: 1; background: white; border: 1.5px solid #0078D4;
+  border-radius: 8px; padding: 7px 10px;
+  display: flex; align-items: flex-start; gap: 7px;
+}
+.pa-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+.pa-name { font-size: 10.5px; font-weight: 700; color: #0078D4; }
+.pa-desc { font-size: 10px; color: #555; }
+
+.dv-box {
+  background: #ECEFF1; border: 2px dashed #78909C;
+  border-radius: 10px; padding: 10px 14px; margin-top: 8px;
+}
+.dv-title { font-size: 10px; font-weight: 700; color: #546E7A; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; text-align: center; }
+.dv-tables { display: flex; gap: 8px; }
+.dv-table {
+  flex: 1; background: white; border: 1.5px solid #B0BEC5;
+  border-radius: 7px; padding: 6px 8px; text-align: center;
+  font-size: 10px;
+}
+.dv-table .dv-ico { font-size: 15px; display: block; margin-bottom: 2px; }
+.dv-table .dv-n { font-weight: 700; color: #37474F; font-size: 10.5px; }
+.dv-table .dv-cols { color: #78909C; font-size: 9.5px; line-height: 1.4; margin-top: 2px; }
+
+/* ── DECISION ── */
+.decision-wrap { position: relative; width: 700px; }
+.decision {
+  background: white; border: 3px solid #F59E0B;
+  border-radius: 12px; padding: 12px 20px; text-align: center;
+  font-size: 13px; font-weight: 800; color: #4E3B00;
+  width: 320px; margin: 0 auto;
+  box-shadow: 0 3px 12px rgba(245,158,11,0.2);
+}
+.decision-sub { font-size: 10.5px; font-weight: 400; color: #888; margin-top: 3px; }
+
+/* ── FORK ── */
+.fork-row { display: flex; gap: 20px; width: 700px; align-items: flex-start; }
+.fork-col { display: flex; flex-direction: column; align-items: center; }
+
+.fork-badge {
+  font-size: 10px; font-weight: 700; padding: 3px 12px;
+  border-radius: 10px; margin-bottom: 5px;
+}
+.badge-yes { background: #C8E6C9; color: #1B5E20; }
+.badge-no  { background: #FFCDD2; color: #B71C1C; }
+
+/* Marketing card */
+.marketing-card {
+  border: 2.5px solid #6A1B9A; border-radius: 11px;
+  overflow: hidden; width: 370px;
+}
+.marketing-head {
+  background: linear-gradient(135deg, #4A148C, #7B1FA2);
+  color: white; padding: 10px 14px;
+  font-size: 12px; font-weight: 800;
+  display: flex; align-items: center; gap: 7px;
+}
+.marketing-body { padding: 10px 14px; font-size: 10.5px; color: #333; line-height: 1.5; background: white; }
+.marketing-out {
+  display: flex; gap: 6px; margin-top: 8px;
+}
+.out-pill {
+  flex: 1; background: #F3E5F5; border: 1px solid #CE93D8;
+  border-radius: 7px; padding: 5px 4px; text-align: center;
+  font-size: 10px; font-weight: 700; color: #4A148C;
+}
+.out-pill span { display: block; font-size: 15px; margin-bottom: 2px; }
+
+/* Reject box */
+.reject-box {
+  background: #FFEBEE; border: 2px solid #EF9A9A;
+  border-radius: 10px; padding: 12px 16px; text-align: center;
+  font-size: 11px; color: #C62828; font-weight: 700; width: 200px;
+}
+.reject-sub { font-size: 10px; font-weight: 400; color: #888; margin-top: 4px; }
+
+/* ── HR AGENT (side panel) ── */
+.hr-section {
+  position: absolute; right: -210px; top: 50%;
+  transform: translateY(-50%);
+}
+.hr-wrapper { width: 190px; }
+.hr-badge {
+  background: #FCE4EC; border: 2px dashed #E91E63;
+  border-radius: 10px; padding: 10px 12px;
+}
+.hr-head {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 11px; font-weight: 800; color: #880E4F; margin-bottom: 8px;
+}
+.hr-body { font-size: 10.5px; color: #444; line-height: 1.5; }
+.hr-body li { margin-bottom: 3px; }
+.hr-arrow {
+  background: #F8BBD9; color: #880E4F;
+  border-radius: 6px; padding: 4px 8px; text-align: center;
+  font-size: 9.5px; font-weight: 700; margin-top: 7px;
+}
+.hr-connector {
+  display: flex; align-items: center; gap: 0;
+  position: absolute; left: -78px; top: 50%;
+  transform: translateY(-50%);
+}
+.hr-line { height: 2px; width: 70px; background: #F48FB1; }
+.hr-dot { width: 8px; height: 8px; border-radius: 50%; background: #E91E63; flex-shrink: 0; }
+
+/* ── Spacer ── */
+.gap6  { height: 6px; }
+.gap10 { height: 10px; }
+.gap16 { height: 16px; }
+
+/* ── Section divider ── */
+.divider {
+  width: 700px; border: none; border-top: 1.5px dashed #CFD8DC;
+  margin: 16px 0 10px;
+}
+
+/* ── Legend ── */
+.legend { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 20px; justify-content: center; }
+.leg-item { display: flex; align-items: center; gap: 5px; font-size: 10.5px; color: #555; }
+.leg-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+</style>
+</head>
+<body>
+
+<h1>🏛️ CONSILIUL — Multi-Agent System Architecture</h1>
+<p class="subtitle">Microsoft Copilot Studio · Power Automate · Dataverse &nbsp;|&nbsp; Revised Architecture v2</p>
+
+<div class="diagram">
+
+  <!-- ── INPUT ──────────────────────────────────────────── -->
+  <div class="layer-lbl">Input</div>
+  <div class="input-box">📄 RFP / Project Requirements &nbsp;·&nbsp; Word · PDF · Text</div>
+  <div class="gap6"></div>
+  <div class="arrow-down arr-sm"></div>
+  <div class="gap10"></div>
+
+  <!-- ── ORCHESTRATOR ──────────────────────────────────── -->
+  <div class="layer-lbl">Orchestrator</div>
+  <div class="orch-wrap" style="position:relative">
+    <div class="orch">
+      <div class="orch-title">🏛️ CONSILIUL — Orchestrator Agent</div>
+      <div class="orch-steps">
+        <div class="orch-step"><span>Step 1</span>Extract RFP fields</div>
+        <div class="orch-step"><span>Step 2</span>Identify skills & budget</div>
+        <div class="orch-step"><span>Step 3</span>Route to agents</div>
+        <div class="orch-step"><span>Step 4</span>Collect responses</div>
+        <div class="orch-step"><span>Step 5</span>Profitability check</div>
+        <div class="orch-step"><span>Step 6</span>Trigger Marketing</div>
+      </div>
+    </div>
+
+    <!-- HR Agent floating right -->
+    <div class="hr-section">
+      <div style="font-size:9.5px;font-weight:700;letter-spacing:1.4px;color:#AAA;text-transform:uppercase;margin-bottom:5px;text-align:center">Independent Flow</div>
+      <div class="hr-wrapper">
+        <div class="hr-connector">
+          <div class="hr-dot"></div>
+          <div class="hr-line"></div>
+        </div>
+        <div class="hr-badge">
+          <div class="hr-head">🆕 HR Agent</div>
+          <div class="hr-body">
+            <ul style="padding-left:13px">
+              <li>Receives new employee CV</li>
+              <li>Extracts: name, role, skills, certs, experience</li>
+              <li>Creates record in Dataverse</li>
+              <li>Immediately available to Resource Mgmt Agent</li>
+            </ul>
+          </div>
+          <div class="hr-arrow">⬇ Writes to Dataverse via PA Flow</div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /orch-wrap -->
+
+  <div class="gap6"></div>
+  <div class="multi-arr" style="width:700px; padding:0 80px;">
+    <span>⬇</span><span>⬇</span><span>⬇</span>
+  </div>
+  <div class="gap6"></div>
+
+  <!-- ── SPECIALIST AGENTS ──────────────────────────────── -->
+  <div class="layer-lbl">Specialist Agents — Invoked in parallel by Orchestrator</div>
+  <div class="agents-row">
+
+    <div class="agent-card ag-proj">
+      <div class="agent-head">📁 Past Projects Agent</div>
+      <div class="agent-body">
+        <ul>
+          <li>Searches past project portfolio</li>
+          <li>Identifies similar engagements by industry, technologies, scope</li>
+          <li>Extracts: team composition, methodology, outcomes, lessons learned</li>
+          <li>Returns relevant experience to Orchestrator for proposal narrative</li>
+        </ul>
+        <div style="margin-top:6px;font-size:9.5px;background:#E8F5E9;border-radius:5px;padding:4px 6px;color:#1B5E20;font-weight:600">
+          📂 Knowledge: past proposal documents (Word/PDF)
+        </div>
+      </div>
+    </div>
+
+    <div class="agent-card ag-res">
+      <div class="agent-head">👥 Resource Management Agent</div>
+      <div class="agent-body">
+        <ul>
+          <li>Receives required skills list from RFP</li>
+          <li>Calls PA flow → queries Dataverse for matching employees</li>
+          <li>Filters by skill proficiency &amp; availability</li>
+          <li>Returns: proposed team with justification per role</li>
+        </ul>
+        <div style="margin-top:6px;font-size:9.5px;background:#E3F2FD;border-radius:5px;padding:4px 6px;color:#1565C0;font-weight:600">
+          ⚡ Action: PA Flow → Dataverse (employees + skills + availability)
+        </div>
+      </div>
+    </div>
+
+    <div class="agent-card ag-fin">
+      <div class="agent-head">💶 Finance Agent</div>
+      <div class="agent-body">
+        <ul>
+          <li>Receives proposed team from Resource Mgmt Agent</li>
+          <li>Calls PA flow → gets salary / daily rate per employee from Dataverse</li>
+          <li>Calculates total project cost (days × rate × allocation)</li>
+          <li>Compares cost vs. client budget from RFP</li>
+          <li>Returns: profitable ✅ / not profitable ❌ + breakdown</li>
+        </ul>
+        <div style="margin-top:6px;font-size:9.5px;background:#FFF3E0;border-radius:5px;padding:4px 6px;color:#E65100;font-weight:600">
+          ⚡ Action: PA Flow → Dataverse (salary + daily rates)
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /agents-row -->
+
+  <!-- ── POWER AUTOMATE + DATAVERSE ─────────────────────── -->
+  <div class="gap10"></div>
+  <div class="data-section">
+    <div style="font-size:9.5px;font-weight:700;letter-spacing:1.4px;color:#AAA;text-transform:uppercase;margin-bottom:6px">Power Automate Flows — Bridge between Agents and Dataverse</div>
+    <div class="pa-row">
+      <div class="pa-flow">
+        <div class="pa-icon">⚡</div>
+        <div>
+          <div class="pa-name">RM_Search_EmployeesBySkills</div>
+          <div class="pa-desc">Input: skills[], start_date → Query bp_employee + bp_employeeskill → Return matches</div>
+        </div>
+      </div>
+      <div class="pa-flow">
+        <div class="pa-icon">⚡</div>
+        <div>
+          <div class="pa-name">Finance_GetRates + CalculateCost</div>
+          <div class="pa-desc">Input: employee_ids[], days[] → Query bp_employee rates → Calculate total cost → Return verdict</div>
+        </div>
+      </div>
+      <div class="pa-flow">
+        <div class="pa-icon">⚡</div>
+        <div>
+          <div class="pa-name">HR_Onboarding_CreateEmployee</div>
+          <div class="pa-desc">Input: parsed CV data → CREATE bp_employee + bp_employeeskill records in Dataverse</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="dv-box">
+      <div class="dv-title">🗄️ Microsoft Dataverse — Single Source of Truth</div>
+      <div class="dv-tables">
+        <div class="dv-table">
+          <span class="dv-ico">👤</span>
+          <div class="dv-n">bp_employee</div>
+          <div class="dv-cols">name · role · seniority<br>status · availability<br>allocation %</div>
+        </div>
+        <div class="dv-table">
+          <span class="dv-ico">🎯</span>
+          <div class="dv-n">bp_employeeskill</div>
+          <div class="dv-cols">skill name · category<br>proficiency level<br>years experience</div>
+        </div>
+        <div class="dv-table">
+          <span class="dv-ico">💰</span>
+          <div class="dv-n">Salary & Rates</div>
+          <div class="dv-cols">monthly salary<br>daily rate internal<br>daily rate billable</div>
+        </div>
+        <div class="dv-table">
+          <span class="dv-ico">📄</span>
+          <div class="dv-n">bp_cv</div>
+          <div class="dv-cols">CV document<br>parsed content<br>upload date</div>
+        </div>
+        <div class="dv-table">
+          <span class="dv-ico">📁</span>
+          <div class="dv-n">bp_project</div>
+          <div class="dv-cols">project history<br>technologies<br>outcomes</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── DECISION ──────────────────────────────────────── -->
+  <div class="gap16"></div>
+  <div class="arrow-down arr-sm"></div>
+  <div class="gap10"></div>
+  <div class="layer-lbl">Orchestrator Decision — Based on Finance Agent Response</div>
+  <div class="decision">
+    🧮 Is the project profitable?
+    <div class="decision-sub">Finance Agent cost ≤ Client Budget &amp; Margin ≥ threshold</div>
+  </div>
+  <div class="gap10"></div>
+
+  <!-- ── FORK ──────────────────────────────────────────── -->
+  <div class="fork-row">
+
+    <!-- YES → Marketing -->
+    <div class="fork-col" style="flex:1">
+      <div class="fork-badge badge-yes">✅ YES — Profitable</div>
+      <div class="arrow-down arr-sm"></div>
+      <div class="gap6"></div>
+      <div class="marketing-card">
+        <div class="marketing-head">
+          🎨 Marketing Agent
+        </div>
+        <div class="marketing-body">
+          Receives from Orchestrator:
+          <ul style="padding-left:14px;margin:5px 0 8px">
+            <li>Similar projects from <strong>Past Projects Agent</strong></li>
+            <li>Proposed team from <strong>Resource Mgmt Agent</strong></li>
+            <li>Cost breakdown from <strong>Finance Agent</strong></li>
+            <li>Client info &amp; requirements from <strong>RFP extraction</strong></li>
+          </ul>
+          Generates final proposal document using BearingPoint brand colours, logo placement, and structured sections.
+          <div class="marketing-out">
+            <div class="out-pill"><span>📄</span>Word Proposal</div>
+            <div class="out-pill"><span>📊</span>PowerPoint Deck</div>
+            <div class="out-pill"><span>📋</span>Executive Summary</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- NO → Reject -->
+    <div class="fork-col" style="align-self:center;margin-top:32px">
+      <div class="fork-badge badge-no">❌ NO — Not Profitable</div>
+      <div class="arrow-down arr-sm"></div>
+      <div class="gap6"></div>
+      <div class="reject-box">
+        🔁 Reject or Re-scope
+        <div class="reject-sub">Orchestrator returns reason to user:<br>cost too high / margin too low</div>
+      </div>
+    </div>
+
+  </div><!-- /fork-row -->
+
+</div><!-- /diagram -->
+
+<!-- ── LEGEND ──────────────────────────────────────────── -->
+<div class="legend">
+  <div class="leg-item"><div class="leg-dot" style="background:#1B3A6B"></div> Orchestrator</div>
+  <div class="leg-item"><div class="leg-dot" style="background:#2E7D32"></div> Past Projects Agent</div>
+  <div class="leg-item"><div class="leg-dot" style="background:#1565C0"></div> Resource Mgmt Agent</div>
+  <div class="leg-item"><div class="leg-dot" style="background:#E65100"></div> Finance Agent</div>
+  <div class="leg-item"><div class="leg-dot" style="background:#E91E63"></div> HR Agent (independent)</div>
+  <div class="leg-item"><div class="leg-dot" style="background:#6A1B9A"></div> Marketing Agent</div>
+  <div class="leg-item"><div class="leg-dot" style="background:#0078D4"></div> Power Automate Flows</div>
+  <div class="leg-item"><div class="leg-dot" style="background:#546E7A"></div> Dataverse</div>
+</div>
+
+<div style="margin-top:14px;font-size:10px;color:#BBB;text-align:center">
+  BearingPoint · Consiliul Multi-Agent System v2 · Microsoft Copilot Studio + Power Automate + Dataverse
+</div>
+
+</body>
+</html>
