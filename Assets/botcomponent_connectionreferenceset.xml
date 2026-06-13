@@ -1,0 +1,11 @@
+<botcomponent_connectionreferenceset>
+  <botcomponent_connectionreference botcomponentid.schemaname="craa7_MSCouncilAgent.action.WorkIQMailMCP-WorkIQMailPreview" connectionreferenceid.connectionreferencelogicalname="craa7_MSCouncilAgent.shared_a365outlookmailmcp.288ed7ffbb39474e907baa291d9626d7">
+    <iscustomizable>1</iscustomizable>
+  </botcomponent_connectionreference>
+  <botcomponent_connectionreference botcomponentid.schemaname="craa7_MSCouncilAgent.topic.WorkIQCopilotPreview" connectionreferenceid.connectionreferencelogicalname="craa7_MSCouncilAgent.shared_a365copilotchatmcp.shared-a365copilotch-4f400e22-f5bb-47cd-b4d8-69534aaac5b0">
+    <iscustomizable>1</iscustomizable>
+  </botcomponent_connectionreference>
+  <botcomponent_connectionreference botcomponentid.schemaname="craa7_MSCouncilAgent.topic.WorkIQUserPreview" connectionreferenceid.connectionreferencelogicalname="craa7_MSCouncilAgent.shared_a365memcp.shared-a365memcp-02c8bcb2-4cdf-4c58-8611-169e0aa8461c">
+    <iscustomizable>1</iscustomizable>
+  </botcomponent_connectionreference>
+</botcomponent_connectionreferenceset>

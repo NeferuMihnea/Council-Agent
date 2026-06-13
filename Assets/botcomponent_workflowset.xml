@@ -1,0 +1,11 @@
+<botcomponent_workflowset>
+  <botcomponent_workflow botcomponentid.schemaname="craa7_MSCandidatesAgent.action.MSCandidatesAgent-InsertDatatoDatavers" workflowid.workflowid="239d4a04-8b66-f111-ab0d-7c1e5220afc7">
+    <iscustomizable>1</iscustomizable>
+  </botcomponent_workflow>
+  <botcomponent_workflow botcomponentid.schemaname="craa7_MSCandidatesRecommendationAgent.action.MSCandidatesRecommendationAgent-SearchCandidatebasedonS" workflowid.workflowid="4ba66857-9666-f111-ab0d-7c1e5220afc7">
+    <iscustomizable>1</iscustomizable>
+  </botcomponent_workflow>
+  <botcomponent_workflow botcomponentid.schemaname="craa7_MSFinanceAgent.action.MSFinanceAgent-DsiplaythepriceforCandidates" workflowid.workflowid="ab243378-9f66-f111-ab0d-7c1e5220afc7">
+    <iscustomizable>1</iscustomizable>
+  </botcomponent_workflow>
+</botcomponent_workflowset>
